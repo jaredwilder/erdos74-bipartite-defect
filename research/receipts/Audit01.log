@@ -1,0 +1,37 @@
+/root/peer/sub-e74/Audit01.lean:241:2: warning: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+/root/peer/sub-e74/Audit01.lean:268:4: warning: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+/root/peer/sub-e74/Audit01.lean:351:14: warning: This simp argument is unused:
+  Subgraph.mem_edgeSet
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵S̵u̵b̵g̵r̵a̵p̵h̵.̵m̵e̵m̵_̵e̵d̵g̵e̵S̵e̵t̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'Erdos74Close.edgeDistancesToBipartite_nonempty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.subgraphEdgeDistsToBipartite_bddAbove' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.edgeSet_finite_of_verts_finite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_of_deleteEdges_empty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_of_deleteEdges_singleton' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_of_defect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.exists_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_finite_subgraph_of_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_of_bounded_defect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.chromaticNumber_le_of_bounded_defect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.exists_defect_gt_of_chromaticNumber_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.no_graph_for_bounded_f' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.erdos74_hypothesis_sharp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.colorable_deleteEdges_of_colorable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.minEdgeDistToBipartite_eq_zero_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Erdos74Close.ncard_hazard_infinite_edgeSet' depends on axioms: [propext, Classical.choice, Quot.sound]

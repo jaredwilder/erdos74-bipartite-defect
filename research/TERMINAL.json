@@ -1,0 +1,128 @@
+{
+  "targetId": "erdos:74",
+  "campaign": "erdos74-close-2026-09-05",
+  "attack": "Attack01",
+  "utc": "2026-09-05",
+  "prize": "$500 (proof) / $250 (counterexample)",
+  "canonicalStatement": "Let f(n) -> infinity (possibly very slowly). Is there a graph of infinite chromatic number such that every finite subgraph on n vertices can be made bipartite by deleting at most f(n) edges?",
+  "contractSha256": "1f2b66fbef969e5a3f6debeca49a13cd64c6d969a4ba7c1f10b8d26e05a8d23e",
+  "contractSource": "oracle/evidence/msl-machine/campaigns/erdos74-campaign-001/contract.json",
+
+  "status": "PARTIAL",
+  "close": false,
+  "closeReason": "NEITHER branch of the contract is met. Branch A (affirmative) requires a graph of infinite chromatic number for EVERY f -> infinity; nothing here constructs any such graph. Branch B (negative) requires exhibiting an f -> infinity for which no such graph exists; nothing here does that either. What is proved is the rate-free half only: infinite chromatic number FORCES the bipartite-defect function to be unbounded, with no rate. The entire open content of Erdos 74 is the rate, so this is progress toward well-posedness, not toward closure.",
+
+  "novelty": {
+    "verdict": "NOT NOVEL AS MATHEMATICS",
+    "reason": "The bound chi(G) <= 2^(B+1) from a bounded bipartite-defect is elementary and folklore: a graph B edges away from bipartite has chromatic number bounded in terms of B, plus de Bruijn-Erdos compactness. The sharp classical bound is chi <= 1 + sqrt(1+8B), better than the 2^(B+1) proved here. NO CLAIM OF MATHEMATICAL NOVELTY IS MADE.",
+    "whatIsNew": "The FORMALIZATION is new. The formal-conjectures file FormalConjectures/ErdosProblems/74.lean carries only two `category test` lemmas (nonempty, bddAbove) and two `sorry`d research statements. It proves nothing about the defect function. The 16 sorry-free theorems banked here are the first machine-checked content about those objects, including a calibration theorem and a load-bearing-guard audit finding."
+  },
+
+  "literatureState": {
+    "knownPositive": "Rodl: there is such a graph (chromatic number aleph_0) for f(n) = eps*n, any fixed eps > 0. Also proved for hypergraphs.",
+    "knownOpen": "Open even for f(n) = sqrt(n).",
+    "knownNegative": "Fails (even for f(n) >> n) if the graph has chromatic number aleph_1 [Erdos-Hajnal-Szemeredi, EHS82; Komjath, arXiv math/0212064].",
+    "gapThisCampaignDidNotTouch": "Everything between bounded f and eps*n. The result banked here sits at the trivial end of that gap.",
+    "sourceOfLiteratureFacts": "erdosproblems.com/74 via web search 2026-09-05; the site itself returned HTTP 403 to direct fetch, so these attributions are SECOND-HAND and should be re-verified against EHS82 and Rodl 1982 before any outward use."
+  },
+
+  "results": [
+    {
+      "name": "colorable_of_bounded_defect",
+      "statement": "For G : SimpleGraph V and B : Nat, if (forall n, maxSubgraphEdgeDistToBipartite G n <= B) then G.Colorable (2^(B+1)).",
+      "status": "PROVED",
+      "note": "Main theorem. Finite-set induction removing one deleted edge at a time (each reinstated edge at most doubles the palette), then Mathlib's de Bruijn-Erdos compactness SimpleGraph.nonempty_hom_of_forall_finite_subgraph_hom."
+    },
+    {
+      "name": "chromaticNumber_le_of_bounded_defect",
+      "statement": "Same hypothesis gives G.chromaticNumber <= (2^(B+1) : Nat).",
+      "status": "PROVED"
+    },
+    {
+      "name": "exists_defect_gt_of_chromaticNumber_top",
+      "statement": "If G.chromaticNumber = top then for every B there is an n with B < maxSubgraphEdgeDistToBipartite G n.",
+      "status": "PROVED",
+      "note": "The rate-free half of Erdos 74: infinite chromatic number forces the defect function to be unbounded. It gives NO rate, and the open problem is entirely about the rate."
+    },
+    {
+      "name": "no_graph_for_bounded_f",
+      "statement": "For bounded f there is NO graph of infinite chromatic number whose n-vertex subgraphs are all within f n edges of bipartite.",
+      "status": "PROVED",
+      "note": "So the answer to the Erdos 74 question is unconditionally NO for every bounded f. This is a genuine negative answer to a degenerate sub-case, NOT to the problem, whose hypothesis is f -> infinity."
+    },
+    {
+      "name": "erdos74_hypothesis_sharp",
+      "statement": "A monotone f : Nat -> Nat that does not tend to infinity is bounded, hence admits no witness graph.",
+      "status": "PROVED",
+      "note": "Shows the `Tendsto f atTop atTop` hypothesis in the formal-conjectures statement of erdos_74 is NECESSARY and cannot be dropped."
+    },
+    {
+      "name": "minEdgeDistToBipartite_eq_zero_iff",
+      "statement": "For A with A.verts.Finite: minEdgeDistToBipartite A = 0 iff A.coe is bipartite.",
+      "status": "PROVED",
+      "note": "CALIBRATION. Proves the defect function is not degenerate on the domain the problem uses. Without this, a theorem about a secretly-zero function would prove nothing."
+    },
+    {
+      "name": "ncard_hazard_infinite_edgeSet",
+      "statement": "The complete graph on Nat, as a subgraph of itself, is NOT bipartite yet has minEdgeDistToBipartite = 0.",
+      "status": "PROVED",
+      "note": "AUDIT FINDING. Set.ncard of an infinite set is 0, so deleting an infinite edge set reports cost 0. Consequence: the `A.verts.Finite` guard inside subgraphEdgeDistsToBipartite is LOAD-BEARING. The formal-conjectures file does carry that guard, so its statement is SOUND; this records why the guard can never be removed. No defect is claimed against that file."
+    }
+  ],
+
+  "formalizationAudit": {
+    "file": "google-deepmind/formal-conjectures FormalConjectures/ErdosProblems/74.lean",
+    "verdict": "FAITHFUL (no semantic defect found)",
+    "checks": [
+      "IsBipartite resolves to Mathlib SimpleGraph.IsBipartite := G.Colorable 2. Correct.",
+      "G.chromaticNumber = top in Nat-infinity means not finitely colourable, i.e. infinite chromatic number in the intended sense. Correct for the existential branch.",
+      "maxSubgraphEdgeDistToBipartite ranges over ARBITRARY Subgraph G, while its docstring says `induced`. Benign: min-defect is monotone under adding edges, so the supremum is attained at induced subgraphs and the two readings agree.",
+      "Set.ncard-of-infinite-set collapse is real but GUARDED by A.verts.Finite; proved as ncard_hazard_infinite_edgeSet.",
+      "sSup over Nat returns junk 0 on unbounded sets, but BddAbove is proved in the source file, so maxSubgraphEdgeDistToBipartite is meaningful.",
+      "For finite V the set subgraphEdgeDistsToBipartite G n is empty for n > card V, so sSup = 0 there. Harmless: the statement is existential over V and is witnessed on infinite V."
+    ]
+  },
+
+  "artifact": "oracle/evidence/msl-machine/campaigns/erdos74-close-2026-09-05/lean/Attack01.lean",
+  "artifactSha256": "dc92539689db4e43efeefbe5bf3cf4644d9b73da47592eb82c10aaebc7a162cf",
+  "box": "root@51.158.234.15:/root/peer/sub-e74/Attack01.lean",
+  "mathlibPin": "919544d4309104b3f19724b0e6e48c701d27948f",
+  "leanToolchain": "leanprover/lean4:v4.31.0-rc1",
+
+  "compile": {
+    "command": "cd /root/formalizer/proofs && export PATH=/root/.elan/bin:$PATH && nice -n 19 lake env lean /root/peer/sub-e74/Attack01.lean",
+    "exit": 0,
+    "errors": 0,
+    "warnings": 2,
+    "warningDetail": "two `push_neg has been deprecated` notices; no semantic content",
+    "log": "oracle/evidence/msl-machine/campaigns/erdos74-close-2026-09-05/receipts/Attack01.log"
+  },
+
+  "axiomAudit": {
+    "command": "lake env lean /root/peer/sub-e74/Audit01.lean  (Attack01.lean + #print axioms for every theorem)",
+    "exit": 0,
+    "theoremsChecked": 16,
+    "sorryAxOccurrences": 0,
+    "distinctFootprints": ["[propext, Classical.choice, Quot.sound]"],
+    "nonCleanFootprints": 0,
+    "log": "oracle/evidence/msl-machine/campaigns/erdos74-close-2026-09-05/receipts/Audit01.log"
+  },
+
+  "priorCampaign": {
+    "id": "erdos74-campaign-001",
+    "iters": 265,
+    "banked": "nothing",
+    "eventCounts": {"no_finding": 249, "lemma": 7, "open_route": 5, "kill": 3, "closure_refused": 1}
+  },
+
+  "unprovedClaims": [
+    "All literature attributions in `literatureState` are UNPROVED by this campaign and are second-hand (erdosproblems.com returned HTTP 403; facts came from web search summaries). They are recorded as context, not as results.",
+    "The exponent 2^(B+1) is not claimed optimal; the classical sharp bound is 1 + sqrt(1+8B) and is NOT formalized here."
+  ],
+
+  "nextMoves": [
+    "Sharpen colorable_of_defect from 2^(B+1) to the classical 1 + sqrt(1+8B) by formalizing `a graph with chromatic number c has at least C(c,2) edges` plus the product-colouring chi(G) <= 2*chi(deleted-edge graph). Purely quantitative; does not approach the open problem.",
+    "The only routes that touch the real problem are (a) formalizing Rodl's f(n) = eps*n construction, which would give the first non-trivial POSITIVE instance in Lean, and (b) formalizing the aleph_1 negative theorem of EHS82. Both are substantial and both are published, so neither carries novelty.",
+    "Do NOT re-run erdos74-campaign-001-style route search: 265 iterations banked nothing."
+  ]
+}
