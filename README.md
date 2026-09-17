@@ -1,67 +1,40 @@
-# Erdős #74: bounded bipartite defect and coloring
+# Erdős #74 — bipartite defect versus chromatic number
 
-How slowly can the distance from bipartite grow among finite subgraphs of a
-graph with infinite chromatic number? This repository organizes Jared Wilder's
-Lean proof of the bounded-defect obstruction, its definitions and audit logs.
+For a graph `G`, let `d_G(n)` be the largest, over its finite `n`-vertex subgraphs, of the minimum number of edges that must be deleted to make the subgraph bipartite.
 
-For a graph `G`, let `d_G(n)` be the largest, over its finite `n`-vertex
-subgraphs, of the minimum number of edges that must be deleted to make the
-subgraph bipartite. The main formal statement is
+The main Lean theorem in this repository is
 
 ```text
 (for every n, d_G(n) ≤ B)  ⇒  G is colorable with 2^(B+1) colors.
 ```
 
-Consequently infinite chromatic number forces unbounded finite-subgraph
-bipartite defect. This is the rate-free obstruction: it does not construct
-graphs for arbitrarily slowly diverging prescribed defect bounds.
+Therefore every graph of infinite chromatic number has unbounded finite-subgraph bipartite defect.
 
-## Proof and scope
+## Proof idea
 
-The proof first colors each finite subgraph: start from a bipartite graph and
-put back at most `B` deleted edges, doubling the color budget per edge. Graph
-coloring compactness then gives a coloring of `G`. The numerical bound is
-convenient for this proof and is not claimed sharp. The source labels the
-mathematical result classical folklore; no novelty claim is made here.
+For each finite subgraph, delete at most `B` edges to obtain a bipartite graph. Start with a 2-coloring of that graph and restore the deleted edges one at a time, doubling the available color palette at each step. Graph-coloring compactness then gives a coloring of the full graph.
 
-The corollary excluding a bounded prescribed function is unconditional. The
-separate `erdos74_hypothesis_sharp` statement assumes the function is monotone
-when converting failure to tend to infinity into boundedness.
+The bound `2^(B+1)` is sufficient for this argument; no sharpness claim is made.
 
-**Finite vertices are essential in these definitions.** Lean's `Set.ncard`
-returns zero for an infinite set. The source supplies a complete-graph
-counterexample showing how an unrestricted edge-deletion definition can
-report zero for an infinite non-bipartite graph. The actual `d_G(n)` definition
-includes a finite-vertex condition, and the zero-defect/bipartite equivalence
-is stated with that condition.
+A separate formal calibration is important here: the definition of `d_G(n)` explicitly restricts to finite vertex sets. Without that condition, Lean's `Set.ncard` behavior on infinite sets can make an unrestricted deletion count degenerate. The repository includes a complete-graph example exposing that issue.
 
-## Reading map and verification
+## Files
 
 | File | Role |
 |---|---|
-| [Attack01.lean](research/lean/Attack01.lean) | Definitions, main theorem, corollaries and `ncard` calibration |
-| [Build log](research/receipts/Attack01.log) | Historical compilation output |
-| [Axiom audit](research/receipts/Audit01.log) | 16 named historical axiom checks |
-| [Terminal record](research/TERMINAL.json) | Source hash, toolchain, proof boundary and historical assessment |
+| [`Attack01.lean`](research/lean/Attack01.lean) | Definitions, main theorem, corollaries, and finite-cardinality calibration |
+| [`Attack01.log`](research/receipts/Attack01.log) | Recorded build output |
+| [`Audit01.log`](research/receipts/Audit01.log) | Axiom checks for 16 named declarations |
+| [`TERMINAL.json`](research/TERMINAL.json) | Toolchain and source record |
+
+## Verification
 
 ```sh
 python verification/verify_source.py
 ```
 
-The command checks byte identity with the pinned public source. The source
-SHA-256 matches the historical terminal record. Its Lean environment was
-`v4.31.0-rc1`, with Mathlib `919544d4309104b3f19724b0e6e48c701d27948f`;
-the recorded build succeeded and the audit lists only standard Lean axioms.
-This promotion did not rebuild Lean. Historical literature assessments in
-the terminal record are preserved as dated source material.
+The source hash matches the recorded terminal receipt. The historical environment was Lean `v4.31.0-rc1` with Mathlib `919544d4309104b3f19724b0e6e48c701d27948f`; the recorded build succeeded and the axiom audit lists only standard Lean axioms.
 
-## Provenance
+The rate-free obstruction above is proved. The stronger problem of constructing graphs whose defect diverges according to an arbitrarily slowly growing prescribed rate is not resolved here.
 
-All four research files are exact copies from the
-[campaign archive](https://github.com/jaredwilder/erdos-campaign-archive).
-[SOURCE-MANIFEST.json](SOURCE-MANIFEST.json) pins the source commit and records
-original paths, Git blobs, sizes and SHA-256 hashes. This focused repository
-provides the mathematical reading map; the archive retains the original record.
-
-Author: Jared Wilder. Campaign: 2026-09-05. Focused release: 2026-09-13.
-License: inherited Apache-2.0; see [LICENSE](LICENSE).
+Author: Jared Wilder. License: Apache-2.0.
